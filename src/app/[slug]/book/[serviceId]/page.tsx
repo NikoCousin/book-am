@@ -14,12 +14,14 @@ async function getBookingData(slug: string, serviceId: string) {
     include: {
       services: {
         where: { id: serviceId, isActive: true },
-      },
-      staff: {
-        where: { isActive: true },
         include: {
-          schedules: {
+          staff: {
             where: { isActive: true },
+            include: {
+              schedules: {
+                where: { isActive: true },
+              },
+            },
           },
         },
       },
@@ -30,12 +32,27 @@ async function getBookingData(slug: string, serviceId: string) {
     return null;
   }
 
-  // Get all schedules from all staff (for now, we'll use the first staff's schedule)
-  const schedules = business.staff.flatMap((s) => s.schedules);
+  const service = business.services[0];
+  const staffMembers = service.staff;
+
+  // Get all schedules from staff members who can perform this service
+  const schedules = staffMembers.flatMap((s) => s.schedules);
 
   return {
     business,
-    service: business.services[0],
+    service,
+    staffMembers: staffMembers.map((staff) => ({
+      id: staff.id,
+      name: staff.name,
+      email: staff.email,
+      phone: staff.phone,
+      imageUrl: staff.imageUrl,
+      schedules: staff.schedules.map((s) => ({
+        dayOfWeek: s.dayOfWeek,
+        startTime: s.startTime,
+        endTime: s.endTime,
+      })),
+    })),
     schedules,
   };
 }
@@ -61,7 +78,7 @@ export default async function BookingPage({ params }: PageProps) {
     notFound();
   }
 
-  const { business, service, schedules } = data;
+  const { business, service, staffMembers, schedules } = data;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -105,6 +122,7 @@ export default async function BookingPage({ params }: PageProps) {
             duration: service.duration,
             price: service.price,
           }}
+          staffMembers={staffMembers}
           schedule={schedules.map((s) => ({
             dayOfWeek: s.dayOfWeek,
             startTime: s.startTime,

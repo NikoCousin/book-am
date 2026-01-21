@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
         },
         staff: {
           select: {
+            id: true,
             name: true,
           },
         },

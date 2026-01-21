@@ -10,6 +10,7 @@ interface ConfirmFormProps {
   serviceId: string;
   date: string;
   time: string;
+  staffId?: string;
 }
 
 type FormStep = "details" | "verify";
@@ -20,6 +21,7 @@ export function ConfirmForm({
   serviceId,
   date,
   time,
+  staffId,
 }: ConfirmFormProps) {
   const router = useRouter();
   const [step, setStep] = useState<FormStep>("details");
@@ -84,6 +86,7 @@ export function ConfirmForm({
           serviceId,
           date,
           time,
+          staffId: staffId || null,
           customerName: name.trim(),
           customerPhone: phone.replace(/\s/g, ""),
           customerEmail: email.trim() || null,

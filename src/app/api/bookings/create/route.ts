@@ -8,6 +8,7 @@ const bookingSchema = z.object({
   serviceId: z.string().min(1),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   time: z.string().regex(/^\d{2}:\d{2}$/),
+  staffId: z.string().nullable().optional(),
   customerName: z.string().min(1),
   customerPhone: z.string().regex(/^\+374\d{8}$/),
   customerEmail: z.string().email().nullable().optional(),
@@ -35,19 +36,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get first active staff member for this business
-    const staff = await prisma.staff.findFirst({
-      where: {
-        businessId: data.businessId,
-        isActive: true,
-      },
-    });
+    // Get staff member - use provided staffId or find first available
+    let staff;
+    if (data.staffId) {
+      // Verify the staff member exists, is active, and can perform this service
+      staff = await prisma.staff.findFirst({
+        where: {
+          id: data.staffId,
+          businessId: data.businessId,
+          isActive: true,
+          services: {
+            some: {
+              id: data.serviceId,
+            },
+          },
+        },
+      });
 
-    if (!staff) {
-      return NextResponse.json(
-        { error: "No staff available" },
-        { status: 400 }
-      );
+      if (!staff) {
+        return NextResponse.json(
+          { error: "Selected staff member is not available for this service" },
+          { status: 400 }
+        );
+      }
+    } else {
+      // Find first active staff member who can perform this service
+      staff = await prisma.staff.findFirst({
+        where: {
+          businessId: data.businessId,
+          isActive: true,
+          services: {
+            some: {
+              id: data.serviceId,
+            },
+          },
+        },
+      });
+
+      if (!staff) {
+        return NextResponse.json(
+          { error: "No staff available for this service" },
+          { status: 400 }
+        );
+      }
     }
 
     // Check if time slot is still available
@@ -55,6 +86,7 @@ export async function POST(request: NextRequest) {
     const existingBooking = await prisma.booking.findFirst({
       where: {
         businessId: data.businessId,
+        staffId: staff.id, // Check conflicts for the specific staff member
         date: bookingDate,
         startTime: data.time,
         status: {

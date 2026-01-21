@@ -7,7 +7,7 @@ import { format, parseISO } from "date-fns";
 
 interface PageProps {
   params: Promise<{ slug: string; serviceId: string }>;
-  searchParams: Promise<{ date?: string; time?: string }>;
+  searchParams: Promise<{ date?: string; time?: string; staffId?: string }>;
 }
 
 async function getBookingData(slug: string, serviceId: string) {
@@ -52,7 +52,7 @@ function formatTime(time: string): string {
 
 export default async function ConfirmPage({ params, searchParams }: PageProps) {
   const { slug, serviceId } = await params;
-  const { date, time } = await searchParams;
+  const { date, time, staffId } = await searchParams;
 
   // Validate required params
   if (!date || !time) {
@@ -126,6 +126,7 @@ export default async function ConfirmPage({ params, searchParams }: PageProps) {
           serviceId={serviceId}
           date={date}
           time={time}
+          staffId={staffId || undefined}
         />
       </main>
     </div>
