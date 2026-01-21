@@ -38,8 +38,13 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-gray-50 to-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <div className="bg-gradient-to-b from-gray-50 to-white border-b border-gray-200 relative overflow-hidden">
+        {/* Decorative Background Blur */}
+        <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+          <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative">
           <div className="text-center">
             {/* Logo */}
             <div className="flex items-center justify-center gap-3 mb-6">
@@ -116,7 +121,7 @@ export default async function Home() {
                 return (
                   <div
                     key={business.id}
-                    className="bg-white border-2 border-gray-200 rounded-lg overflow-hidden hover:border-gray-900 hover:shadow-lg transition-all flex flex-col"
+                    className="bg-white border border-gray-100 rounded-lg overflow-hidden hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col"
                   >
                     {/* Business Image or Placeholder - Clickable */}
                     <Link href={`/${business.slug}`} className="block">
@@ -140,7 +145,7 @@ export default async function Home() {
                       {/* Book Now Button */}
                       <div className="mt-auto pt-4">
                         <Link href={`/${business.slug}`}>
-                          <Button variant="outline" size="sm" className="w-full">
+                          <Button size="sm" className="w-full">
                             Book Now
                             <ArrowRight className="w-3 h-3 ml-2" />
                           </Button>
