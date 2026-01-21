@@ -7,7 +7,6 @@ async function getAllBusinesses() {
   const businesses = await prisma.business.findMany({
     include: {
       services: {
-        where: { isActive: true },
         orderBy: { price: "asc" },
         take: 1, // Just get the first service for the "Book Service" button
         select: {

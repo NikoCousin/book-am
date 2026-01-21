@@ -32,10 +32,9 @@ interface Booking {
   startTime: string;
   endTime: string;
   status: string;
-  customer: {
-    name: string | null;
-    phone: string;
-  };
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string | null;
   service: {
     name: string;
     duration: number;
@@ -86,11 +85,11 @@ function BookingBlock({ booking, dayStartHour }: { booking: Booking; dayStartHou
         height: `${Math.max(height, 24)}px`,
         minHeight: "24px",
       }}
-      title={`${booking.service.name} - ${booking.customer.name || "Guest"} - ${formatTime(booking.startTime)}`}
+      title={`${booking.service.name} - ${booking.customerName || "Guest"} - ${formatTime(booking.startTime)}`}
     >
       <div className="font-semibold truncate leading-tight">{booking.service.name}</div>
       <div className="truncate text-white/90 leading-tight text-[10px]">
-        {booking.customer.name || booking.customer.phone}
+        {booking.customerName || booking.customerPhone}
       </div>
       {height >= 40 && (
         <div className="text-white/80 text-[10px] mt-0.5">{formatTime(booking.startTime)}</div>

@@ -15,7 +15,7 @@ async function getBookingData(slug: string, serviceId: string) {
     where: { slug },
     include: {
       services: {
-        where: { id: serviceId, isActive: true },
+        where: { id: serviceId },
       },
     },
   });

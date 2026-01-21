@@ -23,7 +23,6 @@ async function getBookingDetails(bookingId: string) {
     include: {
       business: true,
       service: true,
-      customer: true,
       staff: true,
     },
   });
@@ -146,7 +145,7 @@ export default async function SuccessPage({ params, searchParams }: PageProps) {
 
         {/* Note */}
         <p className="mt-6 text-sm text-gray-500 text-center">
-          A confirmation has been sent to {booking.customer.phone}
+          A confirmation has been sent to {booking.customerPhone}
         </p>
       </main>
     </div>

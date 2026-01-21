@@ -18,7 +18,7 @@ export default async function StaffPage() {
     where: { businessId },
     include: {
       schedules: {
-        where: { isActive: true },
+        where: { isWorking: true },
         orderBy: { dayOfWeek: "asc" },
       },
       timeOffs: {

@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       },
       include: {
         schedules: {
-          where: { isActive: true },
+          where: { isWorking: true },
           select: {
             dayOfWeek: true,
             startTime: true,

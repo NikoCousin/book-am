@@ -10,7 +10,7 @@ const staffSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email().nullable().optional(),
   phone: z.string().nullable().optional(),
-  imageUrl: z.string().url().nullable().optional(),
+  imageUrl: z.string().url().nullable().optional(), // Keep as imageUrl in API, map to avatar in DB
   isActive: z.boolean().default(true),
 });
 
@@ -46,7 +46,7 @@ export async function createStaff(data: z.infer<typeof staffSchema>) {
         name: validated.name,
         email: validated.email || null,
         phone: validated.phone || null,
-        imageUrl: validated.imageUrl || null,
+        avatar: validated.imageUrl || null, // Map imageUrl to avatar field
         isActive: validated.isActive,
       },
     });
@@ -55,7 +55,7 @@ export async function createStaff(data: z.infer<typeof staffSchema>) {
     return { success: true, staff };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0].message };
+      return { success: false, error: error.issues[0].message };
     }
     console.error("Create staff error:", error);
     return { success: false, error: "Failed to create staff member" };
@@ -85,7 +85,7 @@ export async function updateStaff(
         name: validated.name,
         email: validated.email || null,
         phone: validated.phone || null,
-        imageUrl: validated.imageUrl || null,
+        avatar: validated.imageUrl || null, // Map imageUrl to avatar field
         isActive: validated.isActive,
       },
     });
@@ -94,7 +94,7 @@ export async function updateStaff(
     return { success: true, staff };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0].message };
+      return { success: false, error: error.issues[0].message };
     }
     console.error("Update staff error:", error);
     return { success: false, error: "Failed to update staff member" };
@@ -135,7 +135,7 @@ export async function updateStaffSchedule(
             dayOfWeek: s.dayOfWeek,
             startTime: s.startTime,
             endTime: s.endTime,
-            isActive: true,
+            isWorking: true,
           })),
         });
       }
@@ -145,7 +145,7 @@ export async function updateStaffSchedule(
     return { success: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0].message };
+      return { success: false, error: error.issues[0].message };
     }
     console.error("Update schedule error:", error);
     return { success: false, error: "Failed to update schedule" };
@@ -183,7 +183,7 @@ export async function addTimeOff(
     return { success: true, timeOff };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0].message };
+      return { success: false, error: error.issues[0].message };
     }
     console.error("Add time off error:", error);
     return { success: false, error: "Failed to add time off" };

@@ -12,7 +12,6 @@ async function getBusiness(slug: string) {
     where: { slug },
     include: {
       services: {
-        where: { isActive: true },
         orderBy: { price: "asc" },
       },
       staff: {
@@ -100,11 +99,6 @@ export default async function BusinessPage({ params }: PageProps) {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-semibold text-gray-900">{service.name}</h3>
-                  {service.description && (
-                    <p className="text-sm text-gray-500 mt-1">
-                      {service.description}
-                    </p>
-                  )}
                   <div className="flex items-center gap-1 text-sm text-gray-600 mt-2">
                     <Clock className="w-3.5 h-3.5" />
                     <span>{formatDuration(service.duration)}</span>

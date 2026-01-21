@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
       where: {
         id: data.serviceId,
         businessId: data.businessId,
-        isActive: true,
       },
     });
 
@@ -39,43 +38,33 @@ export async function POST(request: NextRequest) {
     // Get staff member - use provided staffId or find first available
     let staff;
     if (data.staffId) {
-      // Verify the staff member exists, is active, and can perform this service
+      // Verify the staff member exists and is active
       staff = await prisma.staff.findFirst({
         where: {
           id: data.staffId,
           businessId: data.businessId,
           isActive: true,
-          services: {
-            some: {
-              id: data.serviceId,
-            },
-          },
         },
       });
 
       if (!staff) {
         return NextResponse.json(
-          { error: "Selected staff member is not available for this service" },
+          { error: "Selected staff member not found or inactive" },
           { status: 400 }
         );
       }
     } else {
-      // Find first active staff member who can perform this service
+      // Find first active staff member
       staff = await prisma.staff.findFirst({
         where: {
           businessId: data.businessId,
           isActive: true,
-          services: {
-            some: {
-              id: data.serviceId,
-            },
-          },
         },
       });
 
       if (!staff) {
         return NextResponse.json(
-          { error: "No staff available for this service" },
+          { error: "No active staff available" },
           { status: 400 }
         );
       }
@@ -109,41 +98,19 @@ export async function POST(request: NextRequest) {
     const endDateTime = addMinutes(startDateTime, service.duration);
     const endTime = format(endDateTime, "HH:mm");
 
-    // Find or create customer
-    let customer = await prisma.customer.findUnique({
-      where: { phone: data.customerPhone },
-    });
-
-    if (!customer) {
-      customer = await prisma.customer.create({
-        data: {
-          phone: data.customerPhone,
-          name: data.customerName,
-          email: data.customerEmail || null,
-        },
-      });
-    } else {
-      // Update customer info if they already exist
-      customer = await prisma.customer.update({
-        where: { id: customer.id },
-        data: {
-          name: data.customerName,
-          email: data.customerEmail || customer.email,
-        },
-      });
-    }
-
-    // Create booking
+    // Create booking with direct customer fields
     const booking = await prisma.booking.create({
       data: {
         businessId: data.businessId,
         staffId: staff.id,
         serviceId: data.serviceId,
-        customerId: customer.id,
+        customerName: data.customerName,
+        customerPhone: data.customerPhone,
+        customerEmail: data.customerEmail || null,
         date: bookingDate,
         startTime: data.time,
         endTime: endTime,
-        status: "confirmed",
+        status: "CONFIRMED",
         notes: data.notes || null,
       },
     });

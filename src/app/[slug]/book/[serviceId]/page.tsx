@@ -13,15 +13,13 @@ async function getBookingData(slug: string, serviceId: string) {
     where: { slug },
     include: {
       services: {
-        where: { id: serviceId, isActive: true },
+        where: { id: serviceId },
+      },
+      staff: {
+        where: { isActive: true },
         include: {
-          staff: {
-            where: { isActive: true },
-            include: {
-              schedules: {
-                where: { isActive: true },
-              },
-            },
+          schedules: {
+            where: { isWorking: true },
           },
         },
       },
@@ -33,9 +31,9 @@ async function getBookingData(slug: string, serviceId: string) {
   }
 
   const service = business.services[0];
-  const staffMembers = service.staff;
+  const staffMembers = business.staff;
 
-  // Get all schedules from staff members who can perform this service
+  // Get all schedules from staff members
   const schedules = staffMembers.flatMap((s) => s.schedules);
 
   return {
@@ -46,7 +44,7 @@ async function getBookingData(slug: string, serviceId: string) {
       name: staff.name,
       email: staff.email,
       phone: staff.phone,
-      imageUrl: staff.imageUrl,
+      imageUrl: staff.avatar,
       schedules: staff.schedules.map((s) => ({
         dayOfWeek: s.dayOfWeek,
         startTime: s.startTime,

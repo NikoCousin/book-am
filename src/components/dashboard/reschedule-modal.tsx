@@ -11,10 +11,9 @@ interface Booking {
   id: string;
   date: string;
   startTime: string;
-  customer: {
-    name: string | null;
-    phone: string;
-  };
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string | null;
   service: {
     name: string;
     duration: number;
@@ -141,9 +140,9 @@ export function RescheduleModal({
           <div className="bg-gray-50 rounded-lg p-3 space-y-2">
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <User className="w-4 h-4 text-gray-500" />
-              <span>{booking.customer.name || "Guest"}</span>
+              <span>{booking.customerName || "Guest"}</span>
               <span className="text-gray-400">•</span>
-              <span className="text-gray-500">{booking.customer.phone}</span>
+              <span className="text-gray-500">{booking.customerPhone}</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <Scissors className="w-4 h-4 text-gray-500" />

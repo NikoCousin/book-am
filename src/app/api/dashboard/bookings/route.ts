@@ -38,12 +38,6 @@ export async function GET(request: NextRequest) {
         },
       },
       include: {
-        customer: {
-          select: {
-            name: true,
-            phone: true,
-          },
-        },
         service: {
           select: {
             name: true,

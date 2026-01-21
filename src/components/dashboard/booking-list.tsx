@@ -25,10 +25,9 @@ interface Booking {
   endTime: string;
   status: string;
   notes: string | null;
-  customer: {
-    name: string | null;
-    phone: string;
-  };
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string | null;
   service: {
     id: string;
     name: string;
@@ -136,12 +135,12 @@ function BookingCard({
           <div className="space-y-1.5 text-sm">
             <div className="flex items-center gap-2 text-gray-700">
               <User className="w-4 h-4 text-gray-500" />
-              <span>{booking.customer.name || "Guest"}</span>
+              <span>{booking.customerName || "Guest"}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-600">
               <Phone className="w-4 h-4 text-gray-500" />
-              <a href={`tel:${booking.customer.phone}`} className="hover:underline">
-                {booking.customer.phone}
+              <a href={`tel:${booking.customerPhone}`} className="hover:underline">
+                {booking.customerPhone}
               </a>
             </div>
             <div className="flex items-center gap-2 text-gray-700">
@@ -244,7 +243,7 @@ export function BookingList({ businessId, schedule }: BookingListProps) {
       });
 
       if (res.ok) {
-        console.log(`SMS would be sent to ${rescheduleBooking?.customer.phone} with new time: ${newDate} at ${newTime}`);
+        console.log(`SMS would be sent to ${rescheduleBooking?.customerPhone} with new time: ${newDate} at ${newTime}`);
         mutate(`/api/dashboard/bookings?date=${dateStr}`);
         // Also refresh the new date if different
         if (newDate !== dateStr) {
